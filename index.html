@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Saber em Ação — Certificados</title>
+
+  <style>
+    :root{
+      --card-bg: rgba(255,255,255,.92);
+      --text: #111827;
+      --muted: #6b7280;
+      --shadow: 0 12px 30px rgba(0,0,0,.10);
+      --radius: 16px;
+    }
+
+    *{ box-sizing: border-box; }
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+
+      /* Template como fundo */
+      background-image: url("assets/template.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 24px;
+    }
+
+    .wrap{
+      width: min(820px, 100%);
+    }
+
+    .card{
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      backdrop-filter: blur(6px);
+    }
+
+    h1{
+      margin: 0 0 8px 0;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .sub{
+      margin: 0 0 18px 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    label{
+      font-size: 13px;
+      color: var(--muted);
+      display:block;
+      margin-bottom: 6px;
+    }
+
+    select, button{
+      width:100%;
+      padding: 12px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(17,24,39,.15);
+      font-size: 14px;
+      outline: none;
+    }
+
+    select{
+      background: white;
+    }
+
+    button{
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      background: #111827;
+      color: #fff;
+      transition: transform .05s ease, opacity .15s ease;
+    }
+
+    button:active{ transform: scale(.99); }
+    button:disabled{
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .info{
+      margin-top: 14px;
+      padding: 12px 12px;
+      border-radius: 12px;
+      border: 1px dashed rgba(17,24,39,.18);
+      background: rgba(255,255,255,.55);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .row{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pill{
+      display:inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(17,24,39,.06);
+      font-size: 12px;
+      color: rgba(17,24,39,.85);
+    }
+
+    .footer{
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>📜 Certificados — Saber em Ação</h1>
+      <p class="sub">Selecione seu nome e clique em <b>Acessar Certificado</b>. O PDF abrirá em outra aba.</p>
+
+      <div class="grid">
+        <div>
+          <label for="profSelect">👩‍🏫 Professor(a)</label>
+          <select id="profSelect">
+            <option value="" selected disabled>Selecione seu nome…</option>
+          </select>
+        </div>
+
+        <button id="btnOpen" disabled>✅ Acessar Certificado</button>
+
+        <div class="info" id="infoBox" style="display:none;">
+          <div class="row" style="margin-bottom:8px;">
+            <span class="pill" id="pillId">🆔 ID: —</span>
+            <span class="pill" id="pillCpf">🪪 CPF: —</span>
+          </div>
+          <div><b>🧠 Tema:</b> <span id="temaTxt">—</span></div>
+          <div style="margin-top:6px;"><b>🔗 Arquivo:</b> <span id="linkTxt">—</span></div>
+        </div>
+      </div>
+
+      <div class="footer">SESI • CE 113</div>
+    </div>
+  </div>
+
+  <script>
+    // ✅ Se seus PDFs estiverem em /certificados/ID.pdf no GitHub Pages, deixe assim:
+    const CERT_BASE = "certificados/";
+
+    // Lista informada
+    const professores = [
+      { nome: "MATHEUS RODRIGUES DE ALMEIDA", id: 1, cpf: "40719130883", tema: "Inteligência Artificial como Auxiliar na Elaboração de Atividades" },
+      { nome: "ANA CRISTINA DINIZ RIBEIRO", id: 2, cpf: "32050719809", tema: "Olhar atento: Afetividade, Desenvolvimento Socioemocional e Educação Inclusiva" },
+      { nome: "RAFAEL ANGELO", id: 3, cpf: "34166136860", tema: "Produtividade e Inovação Educacional: Aplicação do Método GTD nas Boas Práticas Microsoft Showcase School" },
+      { nome: "CLAUDIO APARECIDO DE OLIVEIRA", id: 4, cpf: "27297058807", tema: "Congada Infantil - 2º Ano" },
+      { nome: "CLAUDIO APARECIDO DE OLIVEIRA", id: 5, cpf: "27297058807", tema: "Cultura e Tradução - Bumba meu Boi - 1º Ano" },
+      { nome: "CATIA DOS SANTOS ESPINA", id: 6, cpf: "21633435881", tema: "Revista de Ciências da Natureza e Matemática" },
+      { nome: "RICARDO RODRIGUES DOS SANTOS", id: 7, cpf: "39415179880", tema: "Produtividade e Inovação Educacional: Aplicação do Método GTD nas Boas Práticas Microsoft Showcase School" },
+      { nome: "ANA PAULA ROSA DA SILVA", id: 8, cpf: "32747297870", tema: "Olhar atento: Afetividade Desenvolvimento Socioemocional e Educação Inclusiva" }
+    ];
+
+    // Monta URL do certificado (você só precisa subir os PDFs com o nome do ID)
+    function getCertUrl(id){
+      return `${CERT_BASE}${id}.pdf`;
+    }
+
+    const sel = document.getElementById("profSelect");
+    const btn = document.getElementById("btnOpen");
+
+    const infoBox = document.getElementById("infoBox");
+    const pillId = document.getElementById("pillId");
+    const pillCpf = document.getElementById("pillCpf");
+    const temaTxt = document.getElementById("temaTxt");
+    const linkTxt = document.getElementById("linkTxt");
+
+    // Preenche dropdown (ordenado por nome)
+    professores
+      .slice()
+      .sort((a,b) => a.nome.localeCompare(b.nome, "pt-BR"))
+      .forEach(p => {
+        const opt = document.createElement("option");
+        opt.value = String(p.id);
+        opt.textContent = `${p.nome} (ID ${p.id})`;
+        sel.appendChild(opt);
+      });
+
+    function renderInfo(p){
+      infoBox.style.display = "block";
+      pillId.textContent = `🆔 ID: ${p.id}`;
+      pillCpf.textContent = `🪪 CPF: ${p.cpf}`;
+      temaTxt.textContent = p.tema;
+      linkTxt.textContent = getCertUrl(p.id);
+    }
+
+    sel.addEventListener("change", () => {
+      const id = Number(sel.value);
+      const prof = professores.find(p => p.id === id);
+
+      if(!prof){
+        btn.disabled = true;
+        infoBox.style.display = "none";
+        return;
+      }
+
+      renderInfo(prof);
+      btn.disabled = false;
+    });
+
+    btn.addEventListener("click", () => {
+      const id = Number(sel.value);
+      const prof = professores.find(p => p.id === id);
+      if(!prof) return;
+
+      const url = getCertUrl(prof.id);
+      window.open(url, "_blank", "noopener,noreferrer");
+    });
+  </script>
+</body>
+</html>
